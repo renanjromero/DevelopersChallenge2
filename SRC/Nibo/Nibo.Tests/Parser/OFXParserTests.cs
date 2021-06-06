@@ -1,7 +1,6 @@
 using FluentAssertions;
 using Nibo.Domain.Models;
 using Nibo.Domain.Parser;
-using Nibo.Domain.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +28,8 @@ namespace Nibo.Tests.Parser
 
             OFXLine[] lines = new OFXLine[]
             {
+                new OFXLine(tagName: "BANKID", value: "0341"),
+                new OFXLine(tagName: "ACCTID", value: "7037300576"),
                 new OFXLine(tagName: "STMTTRN"),
                 new OFXLine(tagName: "TRNTYPE", value:"DEBIT"),
                 new OFXLine(tagName: "DTPOSTED", value: "20140211100000[-03:EST]"),
@@ -46,6 +47,8 @@ namespace Nibo.Tests.Parser
             //Assert
 
             transactions.Should().HaveCount(1);
+            transactions.First().BankId.Should().Be("0341");
+            transactions.First().AccountId.Should().Be("7037300576");
             transactions.First().Type.Should().Be(TransactionType.Debit);
             transactions.First().DatePosted.Should().Be(new DateTimeOffset(year: 2014, month: 02, day: 11, hour: 10, minute: 00, second: 00, offset: new TimeSpan(-8, 0, 0)));
             transactions.First().Amount.Should().Be((decimal)-140.00);
@@ -59,6 +62,8 @@ namespace Nibo.Tests.Parser
 
             OFXLine[] lines = new OFXLine[]
             {
+                new OFXLine(tagName: "BANKID", value: "0341"),
+                new OFXLine(tagName: "ACCTID", value: "7037300576"),
                 new OFXLine(tagName: "STMTTRN"),
                 new OFXLine(tagName: "TRNTYPE", value:"CREDIT"),
                 new OFXLine(tagName: "DTPOSTED", value: "20140217100000[-03:EST]"),
@@ -76,6 +81,8 @@ namespace Nibo.Tests.Parser
             //Assert
 
             transactions.Should().HaveCount(1);
+            transactions.First().BankId.Should().Be("0341");
+            transactions.First().AccountId.Should().Be("7037300576");
             transactions.First().Type.Should().Be(TransactionType.Credit);
             transactions.First().DatePosted.Should().Be(new DateTimeOffset(year: 2014, month: 02, day: 17, hour: 10, minute: 00, second: 00, offset: new TimeSpan(-8, 0, 0)));
             transactions.First().Amount.Should().Be((decimal)1556.91);
