@@ -16,7 +16,7 @@
         <p class="card-text">Select one or more OFX files and update the table bellow.</p>
         <form enctype="multipart/form-data" method="post" asp-action="Upload" class="mb-3">
             <div class="custom-file mb-3">
-                <input type="file" class="custom-file-input" id="ofxUpload" multiple>
+                <input type="file" class="custom-file-input" id="ofxUpload" name="files" multiple>
                 <label class="custom-file-label" for="ofxUpload">Select one or more .ofx files...</label>
             </div>
             <input class="btn btn-primary" type="submit" value="Upload" />
