@@ -19,6 +19,8 @@ namespace Nibo.Domain.Models
             Description = description;
         }
 
+        public int Id { get; set; }
+
         public string BankId { get; set; }
 
         public string AccountId { get; set; }

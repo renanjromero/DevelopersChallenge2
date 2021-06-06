@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nibo.Web.Models;
 using Nibo.Web.Services;
@@ -13,30 +14,26 @@ namespace Nibo.Web.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly ConciliationService _conciliationService;
+        private readonly TransactionService _transactionService;
 
 
-        public HomeController(ILogger<HomeController> logger, ConciliationService conciliationService)
+        public HomeController(ILogger<HomeController> logger, TransactionService transactionService)
         {
             _logger = logger;
-            _conciliationService = conciliationService;
+            _transactionService = transactionService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View(new UploadViewModel());
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
+            var transactions = await _transactionService.GetAllAsync();
+            return View(transactions.OrderBy(x => x.DatePosted)) ;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Upload(UploadViewModel uploadViewModel)
+        public async Task<IActionResult> Upload(IEnumerable<IFormFile> files)
         {
-            await _conciliationService.Upload(uploadViewModel.Files);
-            return View("Index");
+            await _transactionService.Upload(files);
+            return RedirectToAction("Index");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

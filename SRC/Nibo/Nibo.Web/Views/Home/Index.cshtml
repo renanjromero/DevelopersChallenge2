@@ -1,15 +1,100 @@
-﻿@model UploadViewModel
+﻿@model IEnumerable<Transaction>
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Transactions";
+    var timeZone = TimeZoneInfo.Local.StandardName;
+    var total = Model?.Count() ?? 0;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center mt-3 mb-3">
+    <h1 class="display-4">Transactions</h1>
 </div>
 
-<form enctype="multipart/form-data" method="post" asp-action="Upload">
-    <input type="file" multiple asp-for="Files" />
-    <input class="btn" type="submit" value="Upload" />
-</form>
+<div class="card mb-3">
+    <div class="card-body">
+        <h5 class="card-title">OFX import</h5>
+        <p class="card-text">Select one or more OFX files and update the table bellow.</p>
+        <form enctype="multipart/form-data" method="post" asp-action="Upload" class="mb-3">
+            <div class="custom-file mb-3">
+                <input type="file" class="custom-file-input" id="ofxUpload" multiple>
+                <label class="custom-file-label" for="ofxUpload">Select one or more .ofx files...</label>
+            </div>
+            <input class="btn btn-primary" type="submit" value="Upload" />
+        </form>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <h5 class="card-title">Imported transactions (@total)</h5>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Bank
+                    </th>
+                    <th>
+                        Account
+                    </th>
+                    <th>
+                        Type
+                    </th>
+                    <th>
+                        DatePosted (@timeZone)
+                    </th>
+                    <th>
+                        Amount
+                    </th>
+                    <th>
+                        Description
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.BankId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AccountId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Type)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DatePosted.LocalDateTime)
+                        </td>
+                        <td>
+                            @string.Format("{0:C}", item.Amount);
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Description)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function () {
+            $('input[type="file"]').on("change", function () {
+                let filenames = [];
+                let files = document.getElementById("ofxUpload").files;
+                for (let i in files) {
+                    if (files.hasOwnProperty(i)) {
+                        filenames.push(files[i].name);
+                    }
+                }
+
+                $(this).next(".custom-file-label").html(filenames.join(","));
+            });
+        });
+    </script>
+}

@@ -1,9 +1,13 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Nibo.Domain.Interfaces;
+using Nibo.Infra.Context;
+using Nibo.Infra.Repository;
 using Nibo.Web.Services;
 using System;
 using System.Collections.Generic;
@@ -26,7 +30,11 @@ namespace Nibo.Web
         {
             services.AddControllersWithViews();
 
-            services.AddScoped<ConciliationService>();
+            services.AddDbContext<NiboContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("NiboContext")));
+
+            services.AddScoped<TransactionService>();
+            services.AddScoped<ITransactionRepository, TransactionRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

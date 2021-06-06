@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Nibo.Domain\Nibo.Domain.csproj" />
+    <ProjectReference Include="..\Nibo.Infra\Nibo.Infra.csproj" />
   </ItemGroup>
 
 </Project>
